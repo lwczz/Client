@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +17,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen>{
+
+  FocusNode myFocusNode = new FocusNode();
 
   bool _isLoading = false;
 
@@ -51,7 +54,23 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
     return Scaffold(
 
-      body: ,
+      body: SingleChildScrollView(
+
+        child: Container(
+
+          child: Column(
+
+            children: <Widget>[
+
+
+
+            ],
+
+          ),
+
+        ),
+
+      ),
 
     );
 
@@ -63,7 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
       child: TextFormField(
 
-        controller: _passwordTextField,
+        controller:_fullNameField,
 
         validator: (val){
           if(val.isEmpty)
@@ -110,7 +129,53 @@ class _SignUpScreenState extends State<SignUpScreen>{
   }
 
   Widget icNumberField(){
-    return Theme();
+    return Theme(
+
+      child: TextFormField(
+
+        controller: _nriNumberField,
+
+        validator: (val){
+          if(val.isEmpty)
+            return 'Password Field Empty';
+          return null;
+        },
+
+        maxLength: 12,
+
+        obscureText:true,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+
+            enabledBorder: OutlineInputBorder(
+
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              borderSide: BorderSide(color: Colors.black),
+
+            ),
+
+            focusedBorder: OutlineInputBorder(
+
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              borderSide: BorderSide(color: Colors.black),
+
+            ),
+
+            labelText: 'Password',
+            //LabelText
+
+            hintText: 'Password',
+            //HintText
+
+            prefixIcon: Icon(Icons.lock)
+
+        ),
+
+      ),
+
+      data: Theme.of(context).copyWith(primaryColor: Colors.orange,),
+
+    );
   }
 
   Widget emailField(){
@@ -119,7 +184,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
       child: TextFormField(
 
-        controller: _passwordTextField,
+        controller: _emailTextField,
 
         validator: (val){
           if(val.isEmpty)
@@ -169,6 +234,46 @@ class _SignUpScreenState extends State<SignUpScreen>{
   Widget phoneNumberField(){
     return Theme(
 
+      child: IntlPhoneField(
+        controller: _phoneNumberField,
+        decoration: InputDecoration(
+
+          border: InputBorder.none,
+
+          enabledBorder: OutlineInputBorder(
+
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black),
+
+          ),
+
+          focusedBorder: OutlineInputBorder(
+
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black),
+
+          ),
+
+          labelText: 'Contact Number',
+          //LabelText
+
+          labelStyle: TextStyle(
+              color: myFocusNode.hasFocus ? Colors.orange : Colors.black
+          ),
+
+          hintText: 'xxxxxxx',
+          //HintText
+
+          //Icon
+
+
+        ),
+        initialCountryCode: 'MY',
+        onChanged: (phone) {
+          print(phone.completeNumber);
+        },
+      ),
+
       data: Theme.of(context).copyWith(primaryColor: Colors.orange,),
 
     );
@@ -181,13 +286,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
         controller: _passwordTextField,
 
-        validator: (val){
-          if(val.isEmpty)
-            return 'Confirm Password Field Empty';
-          if(val != _new.text)
-            return 'New Password & Confirm Password Not Match';
-          return null;
-        },
 
         obscureText:true,
         decoration: InputDecoration(

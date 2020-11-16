@@ -1,6 +1,6 @@
+import 'package:client_car_service_system/models/classSendEmail.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
-import 'package:technician_car_service_system/models/classSendEmail.dart';
 
 sendEmail(classSendEmail _sendEmailClass) async{
 
