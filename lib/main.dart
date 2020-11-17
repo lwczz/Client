@@ -1,4 +1,7 @@
+import 'package:client_car_service_system/screens/Account/ForgotPasswordScreen.dart';
 import 'package:client_car_service_system/screens/Account/Logout.dart';
+import 'package:client_car_service_system/screens/Account/SignInScreen.dart';
+import 'package:client_car_service_system/screens/Account/SignUpScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

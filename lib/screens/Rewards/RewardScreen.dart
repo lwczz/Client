@@ -5,54 +5,56 @@ import 'package:client_car_service_system/components/Navigation/AppBarComponents
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
 import 'package:client_car_service_system/models/Account/classAccountData.dart';
 import 'package:client_car_service_system/models/Car/classCarData.dart';
+import 'package:client_car_service_system/models/Reward/classRewardData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'AddCarScreen.dart';
 
 
-List<classCarData> carDataList=[];
-class CarScreen extends StatefulWidget {
-  CarScreen({Key key, this.title}) : super(key: key);
+List<classRewardData> rewardDataList=[];
+class RewardScreen extends StatefulWidget {
+  RewardScreen({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _CarScreenState createState() => _CarScreenState();
+  _RewardScreenState createState() => _RewardScreenState();
 }
 
-class _CarScreenState extends State<CarScreen>{
+class _RewardScreenState extends State<RewardScreen>{
 
   List<String> companies;
   GlobalKey<RefreshIndicatorState> refreshKey;
 
   Random r;
 
-  final TextEditingController _emailTextField = TextEditingController();
 
   var _formKey=GlobalKey<FormState>();
 
   var db = new Mysql();
 
-  void _getCars() {
+  void _getRewards() {
 
-    carDataList.clear();
+    rewardDataList.clear();
     db.getConnection().then((conn) {
-      String sqlQuery = "SELECT CR.Cars_Id,CR.PlateNumber,CR.Cars_Model,CR.Cars_Transmission FROM Cars CR,Customers CSM WHERE CR.Customers_Id=CSM.Customers_Id AND CR.Customers_Id='CSM1' ";
+      String sqlQuery = "SELECT * FROM Rewards WHERE Rewards_Balance > 1 ";
 
       conn.query(sqlQuery).then((results) {
         print('${results}');
         for(var row in results){
-          classCarData cr=new classCarData();
-          cr.carId=row[0];
-          cr.carPlateNumber=row[1];
-          cr.carModel=row[2];
-          carDataList.add(cr);
+          classRewardData rw=new classRewardData();
+
+          rw.rewardsId=row[0];
+          rw.rewardsName=row[1];
+          rw.rewardsPoint=row[2];
+          rw.rewardsBalance=row[3];
+
+          rewardDataList.add(rw);
 
         }
         setState(() {
-          carList();
+          rewardList() ;
         });
 
       });
@@ -64,19 +66,19 @@ class _CarScreenState extends State<CarScreen>{
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getCars();
+    _getRewards();
   }
 
   Future<Null> refreshList() async {
     await Future.delayed(Duration(seconds: 2));
-    _getCars();
+    _getRewards();
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
 
-    AppBarData _appBarData=new AppBarData('Car',null);
+    AppBarData _appBarData=new AppBarData('Reward',null);
 
     return Scaffold(
 
@@ -86,17 +88,17 @@ class _CarScreenState extends State<CarScreen>{
         onRefresh: () async {
           await refreshList();
         },
-        child: carList(),
+        child: rewardList(),
       ),
 
     );
   }
 
-  Widget carList(){
+  Widget rewardList(){
 
     return Scaffold(
 
-      body: ListView.builder(itemCount:  carDataList.length,
+      body: ListView.builder(itemCount:  rewardDataList.length,
 
           itemBuilder: (context,index){
 
@@ -118,7 +120,7 @@ class _CarScreenState extends State<CarScreen>{
                 ),
 
                 child: GestureDetector(
-                  onTap: () => print(carDataList[index]),
+                  onTap: () => print(rewardDataList[index]),
                   child: Card(
                     elevation: 5,
                     child: Container(
@@ -144,7 +146,7 @@ class _CarScreenState extends State<CarScreen>{
 
                                     fit: BoxFit.cover,
 
-                                    image: NetworkImage("https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80")
+                                    image: NetworkImage("https://img.freepik.com/free-vector/christmas-new-year-s-day-red-gift-box-white-background-illustration_164911-157.jpg?size=626&ext=jpg")
 
                                 )
                             ),
@@ -170,31 +172,27 @@ class _CarScreenState extends State<CarScreen>{
                                 Align(
 
 
-                                  child: Text('Plate Number      : ${getWidgetCar(carDataList)[index]["Car_PlateNumber"]}',style: TextStyle(fontSize: 16),),
+                                  child: Text('Reward Name   : ${getWidgetReward(rewardDataList)[index]["Reward_Name"]}',style: TextStyle(fontSize: 16),),
                                   alignment: Alignment.centerLeft,
 
                                 ),
 
+                                SizedBox(height: 10,),
+
                                 Align(
 
 
-                                  child:Text('Model                    : ${getWidgetCar(carDataList)[index]["Car_Model"]}',style: TextStyle(fontSize: 16)) ,
+                                  child:Text('Redeem Point   : ${getWidgetReward(rewardDataList)[index]["Reward_Point"]}',style: TextStyle(fontSize: 16)) ,
                                   alignment: Alignment.centerLeft,
 
                                 ),
 
-                                Align(
-
-
-                                  child:Text('Car Transmission : ${getWidgetCar(carDataList)[index]["Car_Transmission"]}',style: TextStyle(fontSize: 16)),
-                                  alignment: Alignment.centerLeft,
-
-                                ),
+                                SizedBox(height: 10,),
 
                                 Align(
 
 
-                                  child:Text('Road Tax Exp        : ',style: TextStyle(fontSize: 15)),
+                                  child:Text('Stock                  : ${getWidgetReward(rewardDataList)[index]["Reward_Balance"]}',style: TextStyle(fontSize: 16)),
                                   alignment: Alignment.centerLeft,
 
                                 ),
@@ -218,9 +216,9 @@ class _CarScreenState extends State<CarScreen>{
 
                 IconSlideAction(
 
-                  caption: 'Delete',
-                  color: Colors.red,
-                  icon: FontAwesomeIcons.trash,
+                  caption: 'Redeem',
+                  color: Colors.green,
+                  icon: FontAwesomeIcons.gift,
 
                   onTap: (){
 
@@ -234,16 +232,6 @@ class _CarScreenState extends State<CarScreen>{
             );
 
           }),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AddCarScreen()));
-
-        },
-        backgroundColor: Colors.orange,
-        child: Icon(Icons.add),
-      ), // This trai
 
     );
 
@@ -263,17 +251,16 @@ class _CarScreenState extends State<CarScreen>{
 
 }
 
-List getWidgetCar(List<classCarData> list){
+List getWidgetReward(List<classRewardData> list){
 
   List _list =[];
   for(int i=0;i<list.length;i++){
     _list.add({
 
-      'Car_Id':'${list[i].carId}',
-      'Car_PlateNumber':'${list[i].carPlateNumber}',
-      'Car_Model':'${list[i].carModel}',
-      'Car_Transmission':'${list[i].carTransmission}',
-
+      'Reward_Id':'${list[i].rewardsId}',
+      'Reward_Name':'${list[i].rewardsName}',
+      'Reward_Point':'${list[i].rewardsPoint}',
+      'Reward_Balance':'${list[i].rewardsBalance}',
 
     });
   }

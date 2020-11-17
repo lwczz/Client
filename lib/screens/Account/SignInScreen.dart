@@ -1,4 +1,9 @@
 import 'dart:convert';
+import 'package:client_car_service_system/screens/Account/SignUpScreen.dart';
+import 'package:client_car_service_system/screens/Cars/AddCarScreen.dart';
+import 'package:client_car_service_system/screens/Cars/CarScreen.dart';
+import 'package:client_car_service_system/screens/Home/HomeScreen.dart';
+import 'package:client_car_service_system/screens/Rewards/RewardScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,105 +54,119 @@ class _SignInScreenState extends State<SignInScreen>{
 
         body: SingleChildScrollView(
 
-          child: Column(
+          child: Stack(
+
             children: <Widget>[
 
-              ClipPath(
+              Column(
+                children: <Widget>[
 
-                  clipper: MyClipper(),
-                  child:Column(
-                    children: <Widget>[
+                  ClipPath(
 
-                      Container(
+                      clipper: MyClipper(),
+                      child:Column(
+                        children: <Widget>[
 
-                        decoration: BoxDecoration(
+                          Container(
 
-                          gradient: LinearGradient(
+                            decoration: BoxDecoration(
 
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [Colors.red, Colors.yellow]
+                              gradient: LinearGradient(
+
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [Colors.red, Colors.yellow]
+
+                              ),
+
+                            ),
+
+                            padding: const EdgeInsets.only(left: 300.0,right: 100.0,top: 0,bottom: 200),
+                          ),
+
+                        ],
+                      )
+
+                  ),
+
+                  Container(
+
+                    child: Image.asset('assets/Logo/HomePageLogo.png'),
+
+
+                  ),
+
+                  Container(
+
+                    margin:EdgeInsets.fromLTRB(30, 0, 30, 0),
+
+                    child: Column(
+
+                      children: <Widget>[
+
+                        Text('Client Login',style: TextStyle(fontSize: 20),),
+
+                        SizedBox(height: 10,),
+
+                        Form(
+
+                          key: _formKey,
+
+                          child: Column(
+
+                            children: <Widget>[
+
+                              emailLogin(),
+
+                              SizedBox(height: 10,),
+
+                              passwordLogin(),
+
+                              SizedBox(height: 10,),
+
+                              loginButton(),
+
+                              SizedBox(height: 10,),
+
+                              signUpButton(),
+
+                              SizedBox(height: 10,),
+
+                            ],
+
+                          ),
+                        ),
+
+                        SizedBox(height: 5,),
+
+                        Align(
+
+                          child: GestureDetector(
+
+                            child: Text("Forgot Password ?",style: TextStyle(fontSize: 16,color: Colors.blue),),
+
+                            onTap: (){
+
+                            },
 
                           ),
 
-                        ),
+                          alignment: Alignment.centerRight,
 
-                        padding: const EdgeInsets.only(left: 300.0,right: 100.0,top: 225,bottom: 0),
-                      ),
+                        )
 
-                    ],
-                  )
+                      ],
 
-              ),
-
-              Container(
-
-                child: Image.asset('assets/Logo/HomePageLogo.png'),
-
-
-              ),
-
-              Container(
-
-                margin:EdgeInsets.fromLTRB(30, 10, 30, 0),
-
-                child: Column(
-
-                  children: <Widget>[
-
-                    Text('Technician Login',style: TextStyle(fontSize: 20),),
-
-                    SizedBox(height: 10,),
-
-                    Form(
-
-                      key: _formKey,
-
-                      child: Column(
-
-                        children: <Widget>[
-
-                          emailLogin(),
-
-                          SizedBox(height: 10,),
-
-                          passwordLogin(),
-
-                          SizedBox(height: 10,),
-
-                          loginButton(),
-
-                        ],
-
-                      ),
                     ),
 
-                    SizedBox(height: 5,),
+                  ),
 
-                    Align(
-
-                      child: GestureDetector(
-
-                        child: Text("Forgot Password ?",style: TextStyle(fontSize: 16,color: Colors.blue),),
-
-                        onTap: (){
-
-                        },
-
-                      ),
-
-                      alignment: Alignment.centerRight,
-
-                    )
-
-                  ],
-
-                ),
-
+                ],
               ),
 
             ],
-          ),
+
+          )
         )
 
     );
@@ -274,18 +293,36 @@ class _SignInScreenState extends State<SignInScreen>{
         splashColor: Colors.orangeAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)
         ),
-        child: Text('Login'),
+        child: Text('Sign In'),
         onPressed: () {
 
-          if(_formKey.currentState.validate()){
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => RewardScreen()));
 
+        },
 
+      ),
+    );
 
-          }else{
+  }
 
+  Widget signUpButton(){
 
+    return ButtonTheme(
 
-          }
+      minWidth: 500.0,
+      height: 50.0,
+
+      child: RaisedButton(
+
+        textColor: Colors.white,
+        color:Colors.orange,
+        splashColor: Colors.orangeAccent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)
+        ),
+        child: Text('Sign Up'),
+        onPressed: () {
+
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => SignUpScreen()));
 
         },
 
