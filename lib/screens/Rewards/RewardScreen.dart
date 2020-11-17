@@ -1,10 +1,7 @@
 
 import 'dart:math';
-
 import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
-import 'package:client_car_service_system/models/Account/classAccountData.dart';
-import 'package:client_car_service_system/models/Car/classCarData.dart';
 import 'package:client_car_service_system/models/Reward/classRewardData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +21,9 @@ class RewardScreen extends StatefulWidget {
 
 class _RewardScreenState extends State<RewardScreen>{
 
-  List<String> companies;
   GlobalKey<RefreshIndicatorState> refreshKey;
 
   Random r;
-
-
-  var _formKey=GlobalKey<FormState>();
 
   var db = new Mysql();
 

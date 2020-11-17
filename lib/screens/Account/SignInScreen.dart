@@ -3,6 +3,7 @@ import 'package:client_car_service_system/screens/Account/SignUpScreen.dart';
 import 'package:client_car_service_system/screens/Cars/AddCarScreen.dart';
 import 'package:client_car_service_system/screens/Cars/CarScreen.dart';
 import 'package:client_car_service_system/screens/Home/HomeScreen.dart';
+import 'package:client_car_service_system/screens/Rewards/RewardHistoryScreen.dart';
 import 'package:client_car_service_system/screens/Rewards/RewardScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -296,7 +297,7 @@ class _SignInScreenState extends State<SignInScreen>{
         child: Text('Sign In'),
         onPressed: () {
 
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => RewardScreen()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => RewardHistoryScreen()));
 
         },
 

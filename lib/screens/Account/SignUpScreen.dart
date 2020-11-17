@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
+import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
+import 'package:client_car_service_system/screens/Account/SignInScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 ProgressDialog pr;
 
@@ -25,13 +27,29 @@ class _SignUpScreenState extends State<SignUpScreen>{
   Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
   final TextEditingController _fullNameField = TextEditingController();
-  final TextEditingController _nriNumberField = TextEditingController();
+  final TextEditingController _nricNumberField = TextEditingController();
   final TextEditingController _emailTextField = TextEditingController();
   final TextEditingController _phoneNumberField = TextEditingController();
   final TextEditingController _passwordTextField = TextEditingController();
   final TextEditingController _confirmPasswordTextField = TextEditingController();
 
+  var db = new Mysql();
+
   var _formKey=GlobalKey<FormState>();
+
+  void _signUpData(){
+
+    db.getConnection().then((conn) {
+
+      conn.query("insert into Peoples (Peoples_Id, Peoples_Name,Peoples_Image,Peoples_Password,Peoples_Email,Peoples_NRIC,Peoples_Phone_Number) values (?,?,?,?,?,?,?)",['PPL2',_fullNameField.text,'',_passwordTextField,_emailTextField.text,_nricNumberField.text,_phoneNumberField.text]);
+
+      conn.query("insert into Customers (Customers_Id, Membership_Point,EWallet,Status,Peoples_Id) values (?,?,?,?,?)",['CSM3',2,0,0,'PPL2']);
+
+      conn.close();
+
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +70,51 @@ class _SignUpScreenState extends State<SignUpScreen>{
             color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
     );
 
+    AppBarData _appBarData=new AppBarData('Sign Up',null);
+
     return Scaffold(
+
+      appBar:AppBarTitle(_appBarData),
 
       body: SingleChildScrollView(
 
         child: Container(
 
+          margin:EdgeInsets.fromLTRB(30, 20, 30, 0),
+
           child: Column(
 
             children: <Widget>[
 
+              fullNameField(),
 
+              SizedBox(height: 10,),
+
+              icNumberField(),
+
+              SizedBox(height: 10,),
+
+              emailField(),
+
+              SizedBox(height: 10,),
+
+              phoneNumberField(),
+
+              SizedBox(height: 10,),
+
+              passwordField(),
+
+              SizedBox(height: 10,),
+
+              confirmPasswordField(),
+
+              SizedBox(height: 10,),
+
+              Text('By registering, you are agreering to the YSMD Terms and Conditions, User Agreement and Privacy Policy'),
+
+              SizedBox(height: 10,),
+
+              signUpButton(),
 
             ],
 
@@ -86,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
         validator: (val){
           if(val.isEmpty)
-            return 'Password Field Empty';
+            return 'Full Name Field Empty';
           return null;
         },
 
@@ -133,11 +185,11 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
       child: TextFormField(
 
-        controller: _nriNumberField,
+        controller: _nricNumberField,
 
         validator: (val){
           if(val.isEmpty)
-            return 'Password Field Empty';
+            return 'NRIC Field Empty';
           return null;
         },
 
@@ -188,7 +240,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
         validator: (val){
           if(val.isEmpty)
-            return 'Password Field Empty';
+            return 'Email Field Empty';
           return null;
         },
 
@@ -236,6 +288,13 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
       child: IntlPhoneField(
         controller: _phoneNumberField,
+
+        validator: (val){
+          if(val.isEmpty)
+            return 'Phone Field Empty';
+          return null;
+        },
+
         decoration: InputDecoration(
 
           border: InputBorder.none,
@@ -286,6 +345,11 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
         controller: _passwordTextField,
 
+        validator: (val){
+          if(val.isEmpty)
+            return 'Password Field Empty';
+          return null;
+        },
 
         obscureText:true,
         decoration: InputDecoration(
@@ -329,6 +393,14 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
         controller: _confirmPasswordTextField,
 
+        validator: (val){
+          if(val.isEmpty)
+            return 'Confirm Password Field Empty';
+          if(val != _confirmPasswordTextField.text)
+            return 'Password & Confirm Password Not Match';
+          return null;
+        },
+
         obscureText:true,
         decoration: InputDecoration(
             border: InputBorder.none,
@@ -362,6 +434,60 @@ class _SignUpScreenState extends State<SignUpScreen>{
       data: Theme.of(context).copyWith(primaryColor: Colors.orange,),
 
     );
+  }
+
+  Widget signUpButton(){
+
+    return ButtonTheme(
+
+      minWidth: 500.0,
+      height: 50.0,
+
+      child: RaisedButton(
+
+          textColor: Colors.white,
+          color:Colors.orange,
+          splashColor: Colors.orangeAccent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)
+          ),
+          child: Text('Sign Up'),
+          onPressed:(){
+
+            if(_formKey.currentState.validate()){
+
+              pr.show();
+              Future.delayed(Duration(seconds: 3)).then((value) {
+                pr.hide().whenComplete(() {
+                  _signUpData();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => SignInScreen()));
+                });
+              }
+              );
+
+            }else{
+
+              final snackBar = SnackBar(
+                content: Text('Invalid Email or Password'),
+                action: SnackBarAction(
+                  label: 'Undo',
+                  onPressed: () {
+                    // Some code to undo the change.
+                  },
+                ),
+
+              );
+              Scaffold.of(context).showSnackBar(snackBar);
+
+            }
+
+
+
+          }
+
+      ),
+    );
+
   }
 
 }
