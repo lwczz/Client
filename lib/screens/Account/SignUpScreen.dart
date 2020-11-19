@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
 import 'package:client_car_service_system/screens/Account/SignInScreen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +42,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
     db.getConnection().then((conn) {
 
-      conn.query("insert into Peoples (Peoples_Id, Peoples_Name,Peoples_Image,Peoples_Password,Peoples_Email,Peoples_NRIC,Peoples_Phone_Number) values (?,?,?,?,?,?,?)",['PPL2',_fullNameField.text,'',_passwordTextField,_emailTextField.text,_nricNumberField.text,_phoneNumberField.text]);
+      conn.query("INSERT INTO Peoples  VALUES ('PPL2',${_fullNameField.text},'',${_passwordTextField.text},${_emailTextField.text},${_nricNumberField.text},${_phoneNumberField.text})");
 
-      conn.query("insert into Customers (Customers_Id, Membership_Point,EWallet,Status,Peoples_Id) values (?,?,?,?,?)",['CSM3',2,0,0,'PPL2']);
+      conn.query("INSERT INTO Customers VALUES ('CSM3',2,0,0,'PPL2')");
 
       conn.close();
 
@@ -219,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
             hintText: 'Password',
             //HintText
 
-            prefixIcon: Icon(Icons.lock)
+            prefixIcon: Icon(FontAwesomeIcons.idCard)
 
         ),
 
@@ -264,13 +265,13 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
             ),
 
-            labelText: 'Password',
+            labelText: 'Email Address',
             //LabelText
 
-            hintText: 'Password',
+            hintText: 'you@example.com',
             //HintText
 
-            prefixIcon: Icon(Icons.lock)
+            prefixIcon: Icon(Icons.email)
 
         ),
 

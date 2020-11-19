@@ -1,15 +1,24 @@
 import 'dart:convert';
+import 'package:client_car_service_system/components/Navigation/BottomNavigations.dart';
+import 'package:client_car_service_system/models/Account/classAccountData.dart';
 import 'package:client_car_service_system/screens/Account/SignUpScreen.dart';
+import 'package:client_car_service_system/screens/Booking/BookingHistoryScreen.dart';
 import 'package:client_car_service_system/screens/Cars/AddCarScreen.dart';
 import 'package:client_car_service_system/screens/Cars/CarScreen.dart';
 import 'package:client_car_service_system/screens/Home/HomeScreen.dart';
+import 'package:client_car_service_system/screens/Home/TopUpScreen.dart';
+import 'package:client_car_service_system/screens/Home/TopUpScreenfulScreen.dart';
+import 'package:client_car_service_system/screens/Membership/MembershipScreen.dart';
 import 'package:client_car_service_system/screens/Rewards/RewardHistoryScreen.dart';
 import 'package:client_car_service_system/screens/Rewards/RewardScreen.dart';
+import 'package:client_car_service_system/screens/Rewards/SwiableRewards.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 ProgressDialog pr;
 
@@ -297,7 +306,7 @@ class _SignInScreenState extends State<SignInScreen>{
         child: Text('Sign In'),
         onPressed: () {
 
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => RewardHistoryScreen()));
+          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=> BottomNavigations()));
 
         },
 
@@ -305,6 +314,8 @@ class _SignInScreenState extends State<SignInScreen>{
     );
 
   }
+
+
 
   Widget signUpButton(){
 
@@ -323,7 +334,7 @@ class _SignInScreenState extends State<SignInScreen>{
         child: Text('Sign Up'),
         onPressed: () {
 
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => SignUpScreen()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => MembershipScreen()));
 
         },
 

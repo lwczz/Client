@@ -33,7 +33,7 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
   void _getRewards() {
     rewardHistoryDataList.clear();
     db.getConnection().then((conn) {
-      String sqlQuery = "SELECT Rewards_Name,Redeem_Code,Redeem_Date,Redeem_Status,Expired_Date FROM Rewards,Reward_Detail WHERE Rewards.Rewards_Id=Reward_Detail.Rewards_Id AND Reward_Detail.Customers_Id='CSM1'";
+      String sqlQuery = "SELECT Rewards_Name,Redeem_Code,Redeem_Date,Redeem_Status,Expired_Date FROM Rewards,Reward_Detail WHERE Rewards.Rewards_Id=Reward_Detail.Rewards_Id AND Reward_Detail.Customers_Id='CSM1' AND Expired_Date> CURRENT_DATE()";
 
       conn.query(sqlQuery).then((results) {
         print('${results}');
@@ -71,11 +71,9 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AppBarData _appBarData = new AppBarData('Reward History', null);
 
     return Scaffold(
 
-      appBar: AppBarTitle(_appBarData),
       body: RefreshIndicator(
         key: refreshKey,
         onRefresh: () async {

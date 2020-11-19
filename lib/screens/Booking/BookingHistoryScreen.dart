@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
+import 'package:client_car_service_system/models/Booking/classBookingData.dart';
 import 'package:client_car_service_system/models/Reward/classRewardData.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,16 +13,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 
-List<classRewardData> rewardHistoryDataList=[];
-class RewardHistoryScreen extends StatefulWidget {
-  RewardHistoryScreen({Key key, this.title}) : super(key: key);
+List<classBookingData> bookingHistoryDataList=[];
+class BookingHistoryScreen extends StatefulWidget {
+  BookingHistoryScreen({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _RewardHistoryScreenState createState() => _RewardHistoryScreenState();
+  _BookingHistoryScreenState createState() => _BookingHistoryScreenState();
 }
 
-class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
+class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
 
   List<String> companies;
   GlobalKey<RefreshIndicatorState> refreshKey;
@@ -30,26 +32,22 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
 
   var db = new Mysql();
 
-  void _getRewards() {
-    rewardHistoryDataList.clear();
+  void _getBooking() {
+    bookingHistoryDataList.clear();
     db.getConnection().then((conn) {
-      String sqlQuery = "SELECT Rewards_Name,Redeem_Code,Redeem_Date,Redeem_Status,Expired_Date FROM Rewards,Reward_Detail WHERE Rewards.Rewards_Id=Reward_Detail.Rewards_Id AND Reward_Detail.Customers_Id='CSM1'";
+      String sqlQuery = "SELECT BK.Booking_Id FROM Customers CSM, Booking BK WHERE CSM.Customers_Id=BK.Customers_Id AND CSM.Customers_Id='CSM1'";
 
       conn.query(sqlQuery).then((results) {
         print('${results}');
         for (var row in results) {
-          classRewardData rw = new classRewardData();
+          classBookingData bk = new classBookingData();
 
-          rw.rewardsName = row[0];
-          rw.redeemCode = row[1];
-          rw.redeemDate = row[2];
-          rw.redeemStatus = row[3];
-          rw.expiryDate = row[4];
+          bk.bookingId = row[0];
 
-          rewardHistoryDataList.add(rw);
+          bookingHistoryDataList.add(bk);
         }
         setState(() {
-          rewardList();
+          bookingHistoryList();
         });
       });
       conn.close();
@@ -60,12 +58,12 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getRewards();
+    _getBooking();
   }
 
   Future<Null> refreshList() async {
     await Future.delayed(Duration(seconds: 2));
-    _getRewards();
+    _getBooking();
     return null;
   }
 
@@ -81,182 +79,285 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
         onRefresh: () async {
           await refreshList();
         },
-        child: rewardList(),
+        child: bookingHistoryList(),
       ),
 
     );
   }
 
-  Widget rewardList() {
+  Widget bookingHistoryList() {
     return Scaffold(
 
-      body: ListView.builder(itemCount: rewardHistoryDataList.length,
 
-          itemBuilder: (context, index) {
-            return Slidable(
+      body: ExpandableTheme(
+        data:
+        const ExpandableThemeData(
+          iconColor: Colors.orange,
+          useInkWell: true,
+        ),
 
-              actionPane: SlidableStrechActionPane(),
-              actionExtentRatio: 0.3,
 
-              child: Container(
-                margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+        child:  ListView.builder(itemCount:bookingHistoryDataList.length,
 
-                decoration: BoxDecoration(
+            itemBuilder: (context, index) {
 
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      topLeft: Radius.circular(10)
-                  ),
+              return ExpandableNotifier(
 
-                ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Card(
 
-                child: GestureDetector(
-                  onTap: () => print(rewardHistoryDataList[index]),
-                  child: Card(
-                    elevation: 5,
-                    child: Container(
+                      elevation: 5,
 
-                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-
-                      height: 150.0,
-                      child: Row(
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
                         children: <Widget>[
+                          SizedBox(
+                            height: 100,
+                            child: Container(
 
-                          Container(
-                            height: 100.0,
-                            width: 100.0,
-                            margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            decoration: BoxDecoration(
+                              child: Row(
+                                children: <Widget>[
 
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topLeft: Radius.circular(10)
-                                ),
+                                  Container(
+                                    width: 250,
+                                    height: 100,
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 2, 0, 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: <Widget>[
 
-                                image: DecorationImage(
+                                          SizedBox(height: 8,),
 
-                                    fit: BoxFit.cover,
+                                          Text(
+                                            "fds ",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
 
-                                    image: NetworkImage(
-                                        "https://img.freepik.com/free-vector/christmas-new-year-s-day-red-gift-box-white-background-illustration_164911-157.jpg?size=626&ext=jpg")
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 6, 0, 2),
+                                            child: Container(
 
-                                )
-                            ),
-                          ),
+                                              child: Text(
+                                                "dfs",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color.fromARGB(
+                                                        255, 48, 48, 54)
+                                                ),),
 
-                          Container(
-                            height: 120.0,
-                            width: 230.0,
-                            padding: const EdgeInsets.only(
-                                left: 0, right: 0, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 0, 0, 2),
+                                            child: Container(
 
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  topLeft: Radius.circular(10)
+                                              child: Text(
+                                                "dsf ",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color.fromARGB(
+                                                        255, 48, 48, 54)
+                                                ),),
+
+                                            ),
+                                          ),
+
+                                        ],
+
+                                      ),
+                                    ),
+                                  ),
+
+                                  Container(
+
+                                    child: Row(
+
+                                      children: [
+                                        Container(
+                                          width: 80,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+
+                                              border: Border.all(color: Colors.orange,width: 2),
+                                              borderRadius: BorderRadius.all(Radius.circular(5))
+                                          ),
+                                          child: Align(
+
+                                            child: ButtonTheme(
+
+                                              minWidth: 500.0,
+                                              height: 50.0,
+
+                                              child: RaisedButton(
+
+                                                textColor: Colors.black,
+                                                color:Colors.white,
+                                                splashColor: Colors.orangeAccent,
+
+                                                child: Text('Pay'),
+                                                onPressed: () {
+
+
+                                                },
+
+                                              ),
+                                            ),
+
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+
+                                  )
+                                ],
                               ),
 
                             ),
-
-                            child: Column(
-
-                              children: <Widget>[
-
-                                Align(
-
-
-                                  child: Text(
-                                    'Reward Name   : ${getWidgetRewardHistory(rewardHistoryDataList)[index]["Rewards_Name"]}',
-                                    style: TextStyle(fontSize: 16),),
-                                  alignment: Alignment.centerLeft,
-
-                                ),
-
-                                SizedBox(height: 5,),
-
-                                Align(
-
-
-                                  child: Text(
-                                      'Redeem Point   : ${getWidgetRewardHistory(rewardHistoryDataList)[index]["Redeem_Date"].toString().substring(0,10)}',
-                                      style: TextStyle(fontSize: 16)),
-                                  alignment: Alignment.centerLeft,
-
-                                ),
-
-                                SizedBox(height: 5,),
-
-                                Align(
-
-
-                                  child: Text(
-                                      'Redeem Status   : ${getWidgetRewardHistory(rewardHistoryDataList)[index]["Redeem_Status"]}',
-                                      style: TextStyle(fontSize: 16)),
-                                  alignment: Alignment.centerLeft,
-
-                                ),
-
-                                SizedBox(height: 5,),
-
-                                Align(
-
-
-                                  child: Text(
-                                      'Expired_Date       : ${getWidgetRewardHistory(rewardHistoryDataList)[index]["Expired_Date"].toString().substring(0,10)}',
-                                      style: TextStyle(fontSize: 16)),
-                                  alignment: Alignment.centerLeft,
-
-                                ),
-
-                              ],
-                            ),
-
                           ),
+                          ScrollOnExpand(
+                            scrollOnExpand: true,
+                            scrollOnCollapse: false,
+                            child: ExpandablePanel(
+                              theme: const ExpandableThemeData(
+                                headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                tapBodyToCollapse: true,
+                              ),
+                              header: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    "Payment Details",
+                                    style: Theme.of(context).textTheme.body2,
+                                  )),
+                              collapsed: RichText(
 
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+
+                                text: TextSpan(
+                                  // Note: Styles for TextSpans must be explicitly defined.
+                                  // Child text spans will inherit styles from parent
+                                  style: new TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.black,
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(text: 'Total ',style: TextStyle(fontWeight: FontWeight.bold),),
+                                    TextSpan(text: '(incl. VAT)                                             ', ),
+                                    TextSpan(text: 'RM sfd', style:  TextStyle(fontWeight: FontWeight.bold)),
+                                  ],
+
+
+                                ),
+                              ),
+                              expanded: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+
+
+
+                                  Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Row(
+
+                                        children: <Widget>[
+
+                                          Text(
+                                            'd',
+                                            softWrap: true,
+                                            overflow: TextOverflow.fade,
+                                          ),
+
+                                          SizedBox(width: 190,),
+                                          Container(
+
+                                            child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child:  Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+
+                                                    Text("RM 10000.00"),
+
+
+                                                  ],
+
+                                                )
+                                            ),
+
+                                          ),
+
+
+                                        ],
+
+                                      )
+
+                                  ),
+
+                                  RichText(
+
+                                    softWrap: true,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+
+                                    text: TextSpan(
+                                      // Note: Styles for TextSpans must be explicitly defined.
+                                      // Child text spans will inherit styles from parent
+                                      style: new TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.black,
+                                      ),
+                                      children: <TextSpan>[
+                                        TextSpan(text: 'Total ',style: TextStyle(fontWeight: FontWeight.bold),),
+                                        TextSpan(text: '(incl. VAT)                                             ', ),
+                                        TextSpan(text: 'RM fds', style:  TextStyle(fontWeight: FontWeight.bold)),
+                                      ],
+
+
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                              builder: (_, collapsed, expanded) {
+                                return Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                  child: Expandable(
+                                    collapsed: collapsed,
+                                    expanded: expanded,
+                                    theme: const ExpandableThemeData(crossFadePoint: 0),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ],
                       ),
-
                     ),
-                  ),
+                  )
+              );
 
-                ),
-
-              ),
-
-              secondaryActions: <Widget>[
-
-                IconSlideAction(
-
-                  caption: 'CODE ${getWidgetRewardHistory(rewardHistoryDataList)[index]["Redeem_Code"]}',
-                  color: Colors.green,
-                  icon: FontAwesomeIcons.code,
-
-                ),
-
-              ],
-
-
-            );
-          }),
-
+            }),
+      ),
     );
   }
 }
 
 
-List getWidgetRewardHistory(List<classRewardData> list){
+List getWidgetBookingHistory(List<classBookingData> list){
 
   List _list =[];
   for(int i=0;i<list.length;i++){
     _list.add({
 
 
-      'Rewards_Name':'${list[i].rewardsName}',
-      'Redeem_Code':'${list[i].redeemCode}',
-      'Redeem_Date':'${list[i].redeemDate}',
-      'Redeem_Status':'${list[i].redeemStatus}',
-      'Expired_Date':'${list[i].expiryDate}',
-
+      'Booking_Id':'${list[i].bookingId}',
     });
   }
   return _list;

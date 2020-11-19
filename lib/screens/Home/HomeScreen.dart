@@ -3,6 +3,7 @@ import 'package:client_car_service_system/components/Navigation/AppBarComponents
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
 import 'package:client_car_service_system/models/Account/classAccountData.dart';
 import 'package:client_car_service_system/models/Car/classCarData.dart';
+import 'package:client_car_service_system/screens/Membership/MembershipScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -169,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen>{
                                   color: Colors.grey,
                                   size: 30.0,),
                                 onPressed: (){
-
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => MembershipScreen()));
                                 },
 
                               ),

@@ -1,3 +1,6 @@
+import 'package:client_car_service_system/screens/Booking/BookingHistoryScreen.dart';
+import 'package:client_car_service_system/screens/Cars/CarScreen.dart';
+import 'package:client_car_service_system/screens/Home/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -13,6 +16,9 @@ class _BottomNavigationsState extends State<BottomNavigations> {
 
   int _currentIndex = 0;
   final List<Widget> _children = [
+      new HomeScreen(),
+      new CarScreen(),
+      new BookingHistoryScreen(),
 
   ];
 
@@ -41,7 +47,7 @@ class _BottomNavigationsState extends State<BottomNavigations> {
           ),
 
           new BottomNavigationBarItem(
-            icon: new Icon(FontAwesomeIcons.shoppingBag),
+            icon: new Icon(FontAwesomeIcons.car),
             title: new Text('Car'),
           ),
 

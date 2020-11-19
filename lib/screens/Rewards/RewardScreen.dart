@@ -1,6 +1,5 @@
 
 import 'dart:math';
-import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
 import 'package:client_car_service_system/models/Reward/classRewardData.dart';
 import 'package:flutter/cupertino.dart';
@@ -55,6 +54,41 @@ class _RewardScreenState extends State<RewardScreen>{
     });
   }
 
+
+
+  void _updateRewards(String _getRewardId) {
+
+    db.getConnection().then((conn) {
+      String sqlQuery = "UPDATE Rewards SET Rewards_Balance=Rewards_Balance-1 WHERE Rewards_Id='${_getRewardId}' ";
+
+      conn.query(sqlQuery);
+
+      conn.close();
+    });
+  }
+
+  void _updateCustomerPoint(int _getRewardPoint) {
+
+    db.getConnection().then((conn) {
+      String sqlQuery = "UPDATE Customers SET Membership_Point=Membership_Point-${_getRewardPoint} WHERE Customers_Id='CSM1' ";
+
+      conn.query(sqlQuery);
+
+      conn.close();
+    });
+  }
+
+  void _insertRewards(String _getRewardId) {
+
+    db.getConnection().then((conn) {
+      String sqlQuery = "INSERT INTO FYP_TEST.Reward_Detail VALUES ('${_getRewardId}','CSM1',LPAD(FLOOR(RAND() * 999999.99), 6, '0'),NOW(),'ACTIVATED',NOW()+INTERVAL 60 DAY) ";
+
+      conn.query(sqlQuery);
+
+      conn.close();
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -71,11 +105,8 @@ class _RewardScreenState extends State<RewardScreen>{
   @override
   Widget build(BuildContext context) {
 
-    AppBarData _appBarData=new AppBarData('Reward',null);
-
     return Scaffold(
 
-      appBar:AppBarTitle(_appBarData),
       body: RefreshIndicator(
         key: refreshKey,
         onRefresh: () async {
@@ -214,6 +245,27 @@ class _RewardScreenState extends State<RewardScreen>{
                   icon: FontAwesomeIcons.gift,
 
                   onTap: (){
+                    _updateRewards(getWidgetReward(rewardDataList)[index]["Reward_Id"]);
+                    _insertRewards(getWidgetReward(rewardDataList)[index]["Reward_Id"]);
+                    _updateCustomerPoint(getWidgetReward(rewardDataList)[index]["Reward_Point"]);
+                    final snackBar = SnackBar(
+
+                      content: Text('${getWidgetReward(rewardDataList)[index]["Reward_Name"]} Successful Redeem.Pls check the Rewards History'),
+                      action: SnackBarAction(
+                        label: 'OK',
+                        onPressed: (){
+
+                          setState(() {
+                            _getRewards();
+                          });
+
+                        },
+                      ),
+
+                    );
+                    Scaffold.of(context).showSnackBar(snackBar);
+
+
 
                   },
 

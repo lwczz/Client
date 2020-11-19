@@ -1,6 +1,7 @@
 import 'package:client_car_service_system/components/Navigation/AppBarComponents.dart';
 import 'package:client_car_service_system/components/Other%20Components/ConnectionMySql.dart';
 import 'package:client_car_service_system/models/Account/classAccountData.dart';
+import 'package:client_car_service_system/models/Car/classCarData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,9 @@ var currentYearsSelectedValue;
 var currentCCSelectedValue;
 
 List<classAccountClientData> accountDataList=[];
+
+String carId="";
+int autoIncrement=0;
 class AddCarScreen extends StatefulWidget {
   AddCarScreen({Key key, this.title}) : super(key: key);
   final String title;
@@ -33,6 +37,47 @@ class _AddCarScreenState extends State<AddCarScreen>{
 
   var db = new Mysql();
 
+  void _carData(){
+
+    db.getConnection().then((conn) {
+
+      String sqlQuery = "INSERT INTO Cars VALUES ('CR${carId.toString()}','A','A',2,'A','A','1000-01-01','CSM1')";
+
+      conn.query(sqlQuery);
+
+      conn.close();
+
+    });
+
+  }
+
+  int _getCarId() {
+
+    accountDataList.clear();
+    db.getConnection().then((conn) {
+      String sqlQuery = "SELECT * FROM Cars ORDER BY Cars_Id DESC LIMIT 1";
+
+      conn.query(sqlQuery).then((results) {
+        for(var row in results){
+
+          carId=row[0];
+        }
+
+        autoIncrement=int.parse(carId.substring(carId.indexOf("CR") + "CR".length));
+        autoIncrement++;
+        if(autoIncrement<11){
+          carId=autoIncrement.toString().padLeft(2, '0');
+        }else{
+          carId=autoIncrement.toString();
+        }
+
+
+      });
+      conn.close();
+    });
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +233,7 @@ class _AddCarScreenState extends State<AddCarScreen>{
                   prefixIcon: Icon(Icons.branding_watermark)
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
+                child: DropdownButtonFormField<String>(
                   hint: Text("Select Make"),
                   value:currentMakeSelectedValue,
                   isDense: true,
@@ -197,6 +242,13 @@ class _AddCarScreenState extends State<AddCarScreen>{
                       currentMakeSelectedValue=newValue;
                     });
                   },
+
+                  validator: (val){
+                    if(val.isEmpty)
+                      return 'Please Select Make';
+                    return null;
+                  },
+
                   items: makeTypes.map((String value){
                     return DropdownMenuItem<String>(
                       value: value,
@@ -292,7 +344,7 @@ class _AddCarScreenState extends State<AddCarScreen>{
                   prefixIcon: Icon(Icons.date_range)
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
+                child: DropdownButtonFormField<String>(
                   hint: Text("Select Year"),
                   value:currentYearsSelectedValue,
                   isDense: true,
@@ -301,6 +353,13 @@ class _AddCarScreenState extends State<AddCarScreen>{
                       currentYearsSelectedValue=newValue;
                     });
                   },
+
+                  validator: (val){
+                    if(val.isEmpty)
+                      return 'Please Select Year';
+                    return null;
+                  },
+
                   items: years.map((String value){
                     return DropdownMenuItem<String>(
                       value: value,
@@ -348,7 +407,7 @@ class _AddCarScreenState extends State<AddCarScreen>{
                   prefixIcon: Icon(Icons.cached)
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
+                child: DropdownButtonFormField<String>(
                   hint: Text("Select CC"),
                   value:currentCCSelectedValue,
                   isDense: true,
@@ -357,6 +416,14 @@ class _AddCarScreenState extends State<AddCarScreen>{
                       currentCCSelectedValue=newValue;
                     });
                   },
+
+                  validator: (val){
+                    if(val.isEmpty)
+                      return 'Please Select CC';
+                    return null;
+                  },
+
+
                   items: ccTypes.map((String value){
                     return DropdownMenuItem<String>(
                       value: value,
@@ -391,7 +458,11 @@ class _AddCarScreenState extends State<AddCarScreen>{
         child: Text('Continue'),
         onPressed: () {
 
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => CarScreen()));
+
+
+          _getCarId();
+          _carData();
+
 
         },
 
